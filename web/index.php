@@ -9,31 +9,24 @@
  * 判断类型
  * 列表、内容
  */
+define('CONFIG_DIR', realpath(__DIR__ . '/../app/config'));
 
 /**
  * 导入包含文件
  */
-# include 'E:\www\work\wuding\php-ext\src\Directory.php';
-# include 'E:\www\work\wuding\php-ext\src\Filesystem.php';
-$config = include __DIR__ . '/../app/config/autoload.php';
-# print_r($config);
+$config = include CONFIG_DIR . '/autoload.php';
 foreach ($config as $file) {
     foreach ($file['filename'] as $filename) {
         $filepath = $file['prefix'] . $filename . $file['suffix'];
         include $filepath;
     }
+    unset($file);
 }
 
 /**
  * 配置
  */
-$hosts = array(
-        'composer.urlnk.host' => 'D:/env\www\work\wubenli\composer',
-        'urlnk.cc' => 'D:/env\www\work\netjoin\cdn',
-    );
-$contentType = array(
-        'css' => 'text/css',
-    );
+extract(include CONFIG_DIR . '/web.php');
 
 /**
  * 请求
@@ -69,6 +62,9 @@ if (is_dir($directory_prefix)) {
     } elseif ($filename_ext && array_key_exists($filename_ext, $contentType)) {
         header("Content-Type: $contentType[$filename_ext]");
     }
+} else {
+    print_r([$directory_prefix, __FILE__, __LINE__]);
+    exit;
 }
 
 echo $str;
